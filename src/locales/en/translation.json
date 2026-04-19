@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "trending": "Trending",
+    "search_placeholder": "Search 10,000+ games...",
+    "games": "Games",
+    "requirements": "Specs"
+  },
+  "eyebrow": "Instant PC Compatibility Check",
+  "title": "Can Your PC <span class='accent'>Handle</span> The Game?",
+  "subtitle": "Search any game and we'll instantly check if your system meets the requirements — no login, no downloads.",
+  "search_btn": "Check Now",
+  "search_placeholder": "Search for a game... e.g. Cyberpunk 2077",
+  "searching": "Searching...",
+  "no_results": "Game not found!",
+  "games_stat": "Games Listed",
+  "checks_stat": "Checks Done",
+  "accuracy_stat": "Accuracy Rate",
+  "login_stat": "Login Required",
+  "specs": {
+    "title": "Your System Configuration",
+    "native_scan": "Native Scan",
+    "manual_entry": "Manual Entry",
+    "browser_detection": "Browser Detection",
+    "edit_specs": "Edit Specs",
+    "refresh": "Refresh",
+    "gpu": "GPU",
+    "ram": "RAM",
+    "cpu": "CPU",
+    "cores": "Cores",
+    "os": "OS",
+    "storage": "Storage",
+    "vram": "VRAM",
+    "scan_again": "Scan Again",
+    "detect": "Detect Specs"
+  },
+  "status": {
+    "recommended": "Recommended",
+    "minimum": "Minimum",
+    "incompatible": "Fail",
+    "unknown": "Unknown"
+  },
+  "modal": {
+    "title": "Manual System Entry",
+    "save": "Save Settings",
+    "note": "These specs will be saved in your browser locally."
+  }
+}

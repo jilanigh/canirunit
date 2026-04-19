@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "trending": "Tendances",
+    "search_placeholder": "Rechercher parmi 10 000+ jeux...",
+    "games": "Jeux",
+    "requirements": "Specs"
+  },
+  "eyebrow": "Vérification de Compatibilité PC",
+  "title": "Votre PC peut-il <span class='accent'>supporter</span> le jeu ?",
+  "subtitle": "Recherchez n'importe quel jeu et nous vérifierons instantanément si votre système répond aux exigences.",
+  "search_btn": "Vérifier",
+  "search_placeholder": "Rechercher un jeu... ex: Cyberpunk 2077",
+  "searching": "Recherche...",
+  "no_results": "Jeu non trouvé !",
+  "games_stat": "Jeux Répertoriés",
+  "checks_stat": "Vérifications Faites",
+  "accuracy_stat": "Taux de Précision",
+  "login_stat": "Connexion Requise",
+  "specs": {
+    "title": "Votre Configuration Système",
+    "native_scan": "Scan Natif",
+    "manual_entry": "Saisie Manuelle",
+    "browser_detection": "Détection Navigateur",
+    "edit_specs": "Modifier Specs",
+    "refresh": "Actualiser",
+    "gpu": "GPU",
+    "ram": "RAM",
+    "cpu": "CPU",
+    "cores": "Cœurs",
+    "os": "OS",
+    "storage": "Stockage",
+    "vram": "VRAM",
+    "scan_again": "Scanner à nouveau",
+    "detect": "Détecter Specs"
+  },
+  "status": {
+    "recommended": "Recommandé",
+    "minimum": "Minimum",
+    "incompatible": "Échec",
+    "unknown": "Inconnu"
+  },
+  "modal": {
+    "title": "Saisie Manuelle du Système",
+    "save": "Enregistrer les paramètres",
+    "note": "Ces spécifications seront enregistrées localement dans votre navigateur."
+  }
+}

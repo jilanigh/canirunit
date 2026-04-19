@@ -1,0 +1,150 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8rem 2rem;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 6rem;
+}
+
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: var(--font-head);
+  font-size: 5rem;
+  font-weight: 950;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 1.2rem;
+}
+
+.arena {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 5rem;
+}
+
+.vs {
+  font-family: var(--font-head);
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--accent);
+  font-style: italic;
+  text-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
+}
+
+.card {
+  flex: 1;
+  background: var(--bg2);
+  padding: 3rem;
+  border-radius: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.winnerCard {
+  border-color: var(--accent);
+  background: rgba(255, 230, 0, 0.03);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(1.03);
+}
+
+.label {
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+}
+
+.select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.2rem;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  outline: none;
+}
+
+.score {
+  font-family: var(--font-head);
+  font-size: 4rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+.rank {
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.result {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3rem;
+  border-radius: 20px;
+  margin-bottom: 4rem;
+}
+
+.result h2 {
+  font-family: var(--font-head);
+  font-size: 2rem;
+}
+
+.highlight {
+  color: var(--accent);
+}
+
+.capabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.capCard {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.capCard h3 {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.capCard p {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .arena { flex-direction: column; }
+  .title { font-size: 3rem; }
+  .capabilityGrid { grid-template-columns: 1fr; }
+}

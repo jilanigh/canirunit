@@ -1,0 +1,42 @@
+
+/* append to FpsEstimator.module.css */
+
+.gameSourceBadge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.fallbackBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 214, 0, 0.06);
+  border: 1px solid rgba(255, 214, 0, 0.2);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.78rem;
+  color: #ffd600;
+}
+
+.retryBtn {
+  background: rgba(255, 214, 0, 0.1);
+  border: 1px solid rgba(255, 214, 0, 0.3);
+  border-radius: 4px;
+  color: #ffd600;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+}
+.retryBtn:hover {
+  background: rgba(255, 214, 0, 0.2);
+}
