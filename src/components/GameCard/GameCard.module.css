@@ -38,6 +38,40 @@
   transform: scale(1.1);
 }
 
+.linkIcon {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(10, 14, 23, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.linkIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.linkIcon:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.card:hover .linkIcon {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .checkBtn {
   position: absolute;
   top: 12px;

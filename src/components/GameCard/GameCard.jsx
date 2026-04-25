@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import styles from './GameCard.module.css';
 import { getCompatibility } from '../../hooks/useSpecs';
 
+const PROJECT_URL = 'https://can-you-run-it.vercel.app';
+
 // ── CHANGE VELOCITY HERE ───────────────────────────────────────────────────
 const MOTION_SETTINGS = {
   revealDuration: 0.5,    // Time to "pop" into view (lower is faster)
@@ -66,6 +68,26 @@ export default function GameCard({ game, specs }) {
           <img src={game.cover.url.replace('t_thumb', 't_cover_big')} alt={game.name} className={styles.coverImage} />
         ) : null}
       </div>
+
+      <a
+        href={PROJECT_URL}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.linkIcon}
+        aria-label="Open Can You Run It live site"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M14 5h5v5M10 14 19 5M19 14v5H5V5h5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </a>
 
       <span className={styles.checkBtn}>
         {t('details')} →
