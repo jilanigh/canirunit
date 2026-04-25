@@ -97,11 +97,22 @@ export function useSpecs() {
     // 2. Fall back to browser detection immediately so UI isn't blank
     detect();
 
-    // 3. Poll BOTH localStorage AND the /api/agent/sync GET endpoint.
-    //    The GET endpoint returns specs the agent POSTed directly — this works
-    //    even when the bridge HTML never opened (e.g. auto-open was blocked).
+    // 3. Listen on BroadcastChannel — bridge HTML posts specs here instantly
+    //    when it opens in any tab on the same origin. This is the fast path.
+    let bc;
+    try {
+      bc = new BroadcastChannel('cyri_agent_channel');
+      bc.onmessage = (event) => {
+        if (event.data?.type === 'SPECS_READY' && event.data?.specs) {
+          saveAgentSpecs(event.data.specs);
+          setSpecs(event.data.specs);
+        }
+      };
+    } catch {}
+
+    // 4. Poll localStorage + API as fallback (bridge may not broadcast in all browsers)
     let retries = 0;
-    const MAX_RETRIES = 30; // 30 × 2s = 60s window
+    const MAX_RETRIES = 30;
 
     const interval = setInterval(async () => {
       retries++;
@@ -110,16 +121,15 @@ export function useSpecs() {
         return;
       }
 
-      // 3a. Re-check localStorage (bridge HTML path)
+      // 4a. Re-check localStorage (bridge HTML writes here)
       const fresh = loadAgentSpecs();
       if (fresh && fresh.method === 'agent') {
         setSpecs(fresh);
-        saveAgentSpecs(fresh);
         clearInterval(interval);
         return;
       }
 
-      // 3b. Poll the server endpoint (direct POST path from agent)
+      // 4b. Poll the server endpoint (direct POST path from agent)
       try {
         const res = await fetch('/api/agent/sync');
         if (res.status === 200) {
@@ -130,13 +140,13 @@ export function useSpecs() {
             clearInterval(interval);
           }
         }
-        // 204 = no specs yet, keep polling
-      } catch {
-        // Network error — keep polling silently
-      }
+      } catch {}
     }, 2000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      try { bc?.close(); } catch {}
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -152,6 +152,7 @@ function displayVerdict(result) {
 // ─── Bridge HTML ───────────────────────────────────────────────────────────
 function writeBridgeFile(specs) {
   const bridgePath = path.join(os.homedir(), 'Desktop', 'CYRI-Open-This.html');
+  const specsJson = JSON.stringify(specs);
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,12 +175,22 @@ function writeBridgeFile(specs) {
   <div class="card">
     <div class="icon">🖥️</div>
     <h1>Loading your specs...</h1>
-    <p>Hardware detected! Redirecting to Can You Run It...</p>
+    <p>Hardware detected! Sending to Can You Run It...</p>
     <div class="bar"><div class="bar-fill"></div></div>
     <p>Not redirected? <a href="${SITE_URL}">Click here</a>.</p>
   </div>
   <script>
-    localStorage.setItem('${LS_KEY}', JSON.stringify(${JSON.stringify(specs)}));
+    const specs = ${specsJson};
+    // 1. Write to localStorage (for this tab + future visits)
+    localStorage.setItem('${LS_KEY}', JSON.stringify(specs));
+    // 2. Broadcast to any already-open tab on the same origin so it
+    //    picks up specs instantly without needing a page reload.
+    try {
+      const ch = new BroadcastChannel('cyri_agent_channel');
+      ch.postMessage({ type: 'SPECS_READY', specs });
+      ch.close();
+    } catch(e) {}
+    // 3. Redirect this tab to the site
     setTimeout(() => window.location.href = '${SITE_URL}', 900);
   </script>
 </body>
