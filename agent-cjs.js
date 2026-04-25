@@ -1,15 +1,11 @@
 const si = require('systeminformation');
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
 const readline = require('readline');
 const { exec } = require('child_process');
 
 // ─── Config ────────────────────────────────────────────────────────────────
-const VERSION   = '1.1.0';
+const VERSION   = '1.2.0';
 const SITE_URL  = 'https://can-you-run-it.vercel.app';
-const LS_KEY    = 'cyri_agent_specs';
 const TIMEOUT   = 8000;
 
 // ─── ANSI Colors ───────────────────────────────────────────────────────────
@@ -149,14 +145,14 @@ function displayVerdict(result) {
   }
 }
 
-// ─── Build site URL with specs in hash ────────────────────────────────────
-// The site reads window.location.hash on load — no localStorage or server needed.
+// ─── Build site URL with specs as query param ──────────────────────────────
+// The site reads ?specs= on load — no localStorage, no server state needed.
 function buildSpecsUrl(specs) {
   const encoded = encodeURIComponent(JSON.stringify(specs));
   return `${SITE_URL}/?specs=${encoded}`;
 }
 
-// ─── Auto-open bridge file in default browser ──────────────────────────────
+// ─── Open URL in default browser ──────────────────────────────────────────
 function openInBrowser(url) {
   exec(`start "" "${url}"`, (err) => {
     if (err) exec(`explorer "${url}"`);
@@ -196,11 +192,11 @@ async function main() {
       () => Promise.all([si.cpu(), si.graphics(), si.mem(), si.fsSize(), si.osInfo()])
     );
 
-    const bestGpu   = pickBestGpu(graphics.controllers);
-    const gpuName   = bestGpu ? `${bestGpu.vendor || ''} ${bestGpu.model || ''}`.replace(/  +/g, ' ').trim() : 'Unknown GPU';
-    const vramGB    = bestGpu ? Math.round((bestGpu.vram || 0) / 1024) : 0;
-    const ramGB     = Math.round(mem.total / (1024 ** 3));
-    const finalCpu  = cleanCpuName(cpu);
+    const bestGpu    = pickBestGpu(graphics.controllers);
+    const gpuName    = bestGpu ? `${bestGpu.vendor || ''} ${bestGpu.model || ''}`.replace(/  +/g, ' ').trim() : 'Unknown GPU';
+    const vramGB     = bestGpu ? Math.round((bestGpu.vram || 0) / 1024) : 0;
+    const ramGB      = Math.round(mem.total / (1024 ** 3));
+    const finalCpu   = cleanCpuName(cpu);
     let maxStorageGB = 0;
     if (drives && drives.length > 0) {
       const best = drives.reduce((p, c) => p.available > c.available ? p : c);
@@ -245,33 +241,15 @@ async function main() {
   const verdict = getVerdict(specs);
   displayVerdict(verdict);
 
-  // ── Sync to Vercel API (best effort) ──
+  // ── Open site with specs in URL ──
+  // Specs are passed as ?specs= query param — the site reads them on load.
+  // This avoids all localStorage cross-origin issues entirely.
   console.log('');
-  sectionHeader('Syncing to Site');
+  sectionHeader('Opening Site');
   console.log('');
-  let serverOk = false;
-  try {
-    const res = await withSpinner(
-      'Sending specs to server',
-      () => axios.post(`${SITE_URL}/api/agent/sync`, specs, { timeout: TIMEOUT })
-    );
-    if (res.status === 200) serverOk = true;
-  } catch {
-    process.stdout.write('\r' + C.yellow + '▲' + C.reset + '  Server unreachable — opening bridge file instead\n');
-  }
 
-  // ── Write bridge file and AUTO-OPEN it ──
-  let siteUrl;
-  try {
-    siteUrl = buildSpecsUrl(specs);
-  } catch (err) {
-    console.error(C.red + '  Could not build URL: ' + err.message + C.reset);
-    siteUrl = SITE_URL;
-  }
-
-  // Open the site directly with specs in the URL — works from any origin
-  console.log('');
-  await withSpinner('Opening site in your browser', async () => {
+  const siteUrl = buildSpecsUrl(specs);
+  await withSpinner('Opening your browser', async () => {
     openInBrowser(siteUrl);
     await new Promise(r => setTimeout(r, 1200));
   });
