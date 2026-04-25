@@ -100,8 +100,7 @@ export default function SpecsModal({ specs, onClose }) {
             </p>
 
             <a
-              href="/CYRI-Agent.exe"
-              download="CYRI-Agent.exe"
+              href="https://github.com/jilanigh/canirunit/releases/latest/download/CYRI-Agent.exe"
               className={styles.downloadBtn}
             >
               ⬇ Download Desktop Agent <span className={styles.downloadMeta}>.exe · ~38 MB · Windows</span>
