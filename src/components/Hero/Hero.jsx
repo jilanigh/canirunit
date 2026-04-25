@@ -191,13 +191,6 @@ export default function Hero() {
             </a>
           </div>
           <div className={styles.agentMeta}>
-            <span>🔒 No install required</span>
-            <span>·</span>
-            <span>No background tasks</span>
-            <span>·</span>
-            <span>Windows 10 / 11</span>
-            <span>·</span>
-            <span>Free</span>
           </div>
         </motion.div>
 
