@@ -1,8 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './SpecsModal.module.css';
 
 export default function SpecsModal({ specs, onClose }) {
   const isAgent = specs.method === 'agent';
+  const [pollCount, setPollCount] = useState(0);
+
+  // Tick a counter so the waiting message animates and feels alive
+  useEffect(() => {
+    if (isAgent) return;
+    const t = setInterval(() => setPollCount(n => n + 1), 2000);
+    return () => clearInterval(t);
+  }, [isAgent]);
+
+  const dots = '.'.repeat((pollCount % 3) + 1).padEnd(3, '\u00a0');
 
   // Close on Escape key
   useEffect(() => {
@@ -98,10 +108,10 @@ export default function SpecsModal({ specs, onClose }) {
             </a>
 
             <p className={styles.downloadHint}>
-              Run the downloaded <code>.exe</code>, then come back here and click <strong>Detect Specs</strong> again.
+              Run the downloaded <code>.exe</code> — it will automatically open this page with your full specs loaded.
             </p>
 
-            <p className={styles.waitingText}>⏳ Waiting for agent connection…</p>
+            <p className={styles.waitingText}>⏳ Listening for agent{dots}</p>
           </div>
         )}
 

@@ -87,23 +87,21 @@ export function useSpecs() {
   };
 
   useEffect(() => {
-    // 1. Check localStorage first — agent may have synced in a previous visit
+    // 1. Check localStorage first — agent may have synced via bridge HTML
     const cached = loadAgentSpecs();
-    if (cached) {
+    if (cached && cached.method === 'agent') {
       setSpecs(cached);
-      return; // No need to poll or do browser detection
+      return;
     }
 
-    // 2. Fall back to browser detection
+    // 2. Fall back to browser detection immediately so UI isn't blank
     detect();
 
-    // 3. Poll the agent sync endpoint (agent POSTs specs → endpoint echoes them back)
-    //    We do a lightweight GET to check if the agent is alive,
-    //    but specs arrive via the agent's POST → stored in localStorage by agent-cjs
-    //    Actually: we open a BroadcastChannel so agent can notify the page directly
-    //    For simplicity, we poll the endpoint every 2s for up to 1 min
+    // 3. Poll BOTH localStorage AND the /api/agent/sync GET endpoint.
+    //    The GET endpoint returns specs the agent POSTed directly — this works
+    //    even when the bridge HTML never opened (e.g. auto-open was blocked).
     let retries = 0;
-    const MAX_RETRIES = 30;
+    const MAX_RETRIES = 30; // 30 × 2s = 60s window
 
     const interval = setInterval(async () => {
       retries++;
@@ -112,11 +110,29 @@ export function useSpecs() {
         return;
       }
 
-      // Re-check localStorage in case agent wrote specs since last check
+      // 3a. Re-check localStorage (bridge HTML path)
       const fresh = loadAgentSpecs();
       if (fresh && fresh.method === 'agent') {
         setSpecs(fresh);
+        saveAgentSpecs(fresh);
         clearInterval(interval);
+        return;
+      }
+
+      // 3b. Poll the server endpoint (direct POST path from agent)
+      try {
+        const res = await fetch('/api/agent/sync');
+        if (res.status === 200) {
+          const data = await res.json();
+          if (data?.specs?.method === 'agent') {
+            saveAgentSpecs(data.specs);
+            setSpecs(data.specs);
+            clearInterval(interval);
+          }
+        }
+        // 204 = no specs yet, keep polling
+      } catch {
+        // Network error — keep polling silently
       }
     }, 2000);
 
