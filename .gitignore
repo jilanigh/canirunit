@@ -36,7 +36,6 @@ dist-ssr
 node_modules/*
 
 package-lock.json
-package.json
 
 # Built agent executable (large binary, not for source control)
 dist-agent/
