@@ -8,9 +8,14 @@ import useDebounce from '../../hooks/useDebounce';
 
 // ── CHANGE VELOCITY HERE ───────────────────────────────────────────────────
 const MOTION_SETTINGS = {
-  staggerDelay: 1,    // Gap between items appearing (lower is faster)
-  fadeInDuration: 1,  // Duration of each individual fade (lower is faster)
+  staggerDelay: 1,
+  fadeInDuration: 1,
 };
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Update this URL after you publish a GitHub Release ────────────────────
+const AGENT_DOWNLOAD_URL =
+  'https://github.com/YOUR_USERNAME/can-you-run-it/releases/latest/download/CYRI-Agent.exe';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Hero() {
@@ -89,7 +94,7 @@ export default function Hero() {
       <div className={styles.gridBg} />
       <div className={styles.glow} />
 
-      <motion.div 
+      <motion.div
         className={styles.content}
         initial="hidden"
         animate="visible"
@@ -100,10 +105,10 @@ export default function Hero() {
           {t('eyebrow')}
         </motion.div>
 
-        <motion.h1 
-          className={styles.heading} 
+        <motion.h1
+          className={styles.heading}
           variants={itemVariants}
-          dangerouslySetInnerHTML={{ __html: t('title') }} 
+          dangerouslySetInnerHTML={{ __html: t('title') }}
         />
 
         <motion.p className={styles.subheading} variants={itemVariants}>
@@ -127,7 +132,7 @@ export default function Hero() {
           </form>
 
           {showDropdown && (
-            <motion.div 
+            <motion.div
               className={styles.dropdown}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -161,6 +166,41 @@ export default function Hero() {
               )}
             </motion.div>
           )}
+        </motion.div>
+
+        {/* ── Desktop Agent Download Banner ── */}
+        <motion.div className={styles.agentBanner} variants={itemVariants}>
+          <div className={styles.agentBannerInner}>
+            <div className={styles.agentBannerLeft}>
+              <span className={styles.agentIcon}>🖥️</span>
+              <div>
+                <div className={styles.agentTitle}>Get Accurate Results</div>
+                <div className={styles.agentDesc}>
+                  Download the free desktop agent — auto-detects your GPU, CPU &amp; RAM instantly.
+                </div>
+              </div>
+            </div>
+            <a
+              href={AGENT_DOWNLOAD_URL}
+              className={styles.agentDownloadBtn}
+              download
+              rel="noopener noreferrer"
+            >
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M7.5 1v9m0 0L4 7m3.5 3L11 7M1 13h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Download for Windows
+            </a>
+          </div>
+          <div className={styles.agentMeta}>
+            <span>🔒 No install required</span>
+            <span>·</span>
+            <span>No background tasks</span>
+            <span>·</span>
+            <span>Windows 10 / 11</span>
+            <span>·</span>
+            <span>Free</span>
+          </div>
         </motion.div>
 
         <motion.div className={styles.stats} variants={itemVariants}>
