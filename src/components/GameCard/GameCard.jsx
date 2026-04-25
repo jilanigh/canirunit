@@ -80,7 +80,7 @@ export default function GameCard({ game, specs }) {
             {stats.players > 0 && (
               <div className={styles.playerCount}>
                 <span className={styles.livePulse} />
-                {formatPlayers(stats.players)} {t('common.live')}
+                {formatPlayers(stats.players)} {t('live')}
               </div>
             )}
             {stats.downloads && stats.downloads !== 'N/A' && (
