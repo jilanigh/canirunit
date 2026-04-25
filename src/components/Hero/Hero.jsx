@@ -13,10 +13,8 @@ const MOTION_SETTINGS = {
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── Update this URL after you publish a GitHub Release ────────────────────
 const AGENT_DOWNLOAD_URL =
-  'https://github.com/YOUR_USERNAME/can-you-run-it/releases/latest/download/CYRI-Agent.exe';
-// ─────────────────────────────────────────────────────────────────────────────
+  'https://github.com/jilanigh/canirunit/releases/latest/download/CYRI-Agent.exe';
 
 export default function Hero() {
   const { t } = useTranslation();
