@@ -149,64 +149,17 @@ function displayVerdict(result) {
   }
 }
 
-// ─── Bridge HTML ───────────────────────────────────────────────────────────
-function writeBridgeFile(specs) {
-  const bridgePath = path.join(os.homedir(), 'Desktop', 'CYRI-Open-This.html');
-  const specsJson = JSON.stringify(specs);
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>CYRI Agent — Loading your specs...</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#0f0f13; color:#e2e8f0; display:flex; align-items:center; justify-content:center; min-height:100vh; }
-    .card { background:#1a1a2e; border:1px solid #2d2d4e; border-radius:16px; padding:40px 48px; text-align:center; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,.5); }
-    .icon { font-size:48px; margin-bottom:16px; }
-    h1 { font-size:22px; font-weight:700; margin-bottom:8px; color:#a78bfa; }
-    p { color:#94a3b8; font-size:14px; line-height:1.6; }
-    .bar { width:100%; height:4px; background:#2d2d4e; border-radius:9999px; margin:24px 0; overflow:hidden; }
-    .bar-fill { height:100%; background:linear-gradient(90deg,#7c3aed,#a78bfa); border-radius:9999px; animation:progress 0.8s ease-in-out forwards; }
-    @keyframes progress { from{width:0%} to{width:100%} }
-    a { color:#a78bfa; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="icon">🖥️</div>
-    <h1>Loading your specs...</h1>
-    <p>Hardware detected! Sending to Can You Run It...</p>
-    <div class="bar"><div class="bar-fill"></div></div>
-    <p>Not redirected? <a href="${SITE_URL}">Click here</a>.</p>
-  </div>
-  <script>
-    const specs = ${specsJson};
-    // 1. Write to localStorage (for this tab + future visits)
-    localStorage.setItem('${LS_KEY}', JSON.stringify(specs));
-    // 2. Broadcast to any already-open tab on the same origin so it
-    //    picks up specs instantly without needing a page reload.
-    try {
-      const ch = new BroadcastChannel('cyri_agent_channel');
-      ch.postMessage({ type: 'SPECS_READY', specs });
-      ch.close();
-    } catch(e) {}
-    // 3. Redirect this tab to the site
-    setTimeout(() => window.location.href = '${SITE_URL}', 900);
-  </script>
-</body>
-</html>`;
-  fs.writeFileSync(bridgePath, html, 'utf8');
-  return bridgePath;
+// ─── Build site URL with specs in hash ────────────────────────────────────
+// The site reads window.location.hash on load — no localStorage or server needed.
+function buildSpecsUrl(specs) {
+  const encoded = encodeURIComponent(JSON.stringify(specs));
+  return `${SITE_URL}/?specs=${encoded}`;
 }
 
 // ─── Auto-open bridge file in default browser ──────────────────────────────
-function openInBrowser(filePath) {
-  // Use start on Windows to open the HTML file in the default browser
-  exec(`start "" "${filePath}"`, (err) => {
-    if (err) {
-      // Fallback: try explorer
-      exec(`explorer "${filePath}"`);
-    }
+function openInBrowser(url) {
+  exec(`start "" "${url}"`, (err) => {
+    if (err) exec(`explorer "${url}"`);
   });
 }
 
@@ -308,22 +261,20 @@ async function main() {
   }
 
   // ── Write bridge file and AUTO-OPEN it ──
-  let bridgePath;
+  let siteUrl;
   try {
-    bridgePath = writeBridgeFile(specs);
+    siteUrl = buildSpecsUrl(specs);
   } catch (err) {
-    console.error(C.red + '  Could not write bridge file: ' + err.message + C.reset);
+    console.error(C.red + '  Could not build URL: ' + err.message + C.reset);
+    siteUrl = SITE_URL;
   }
 
-  // Always auto-open the bridge — it sets localStorage AND redirects to the site
-  if (bridgePath) {
-    console.log('');
-    await withSpinner('Opening site in your browser', async () => {
-      openInBrowser(bridgePath);
-      // Small delay so spinner shows before window opens
-      await new Promise(r => setTimeout(r, 1200));
-    });
-  }
+  // Open the site directly with specs in the URL — works from any origin
+  console.log('');
+  await withSpinner('Opening site in your browser', async () => {
+    openInBrowser(siteUrl);
+    await new Promise(r => setTimeout(r, 1200));
+  });
 
   // ── Final message ──
   console.log('');

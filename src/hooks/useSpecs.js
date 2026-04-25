@@ -87,66 +87,48 @@ export function useSpecs() {
   };
 
   useEffect(() => {
-    // 1. Check localStorage first — agent may have synced via bridge HTML
+    // 1. Check if agent passed specs via URL query param (?specs=...)
+    //    This is the primary path — agent opens the site with specs in the URL.
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('specs');
+      if (raw) {
+        const agentData = JSON.parse(decodeURIComponent(raw));
+        if (agentData?.gpu) {
+          const s = { ...agentData, method: 'agent', detected: true };
+          saveAgentSpecs(s);
+          setSpecs(s);
+          // Clean the URL so specs don't sit in the address bar
+          window.history.replaceState({}, '', window.location.pathname);
+          return;
+        }
+      }
+    } catch {}
+
+    // 2. Check localStorage — specs from a previous agent run
     const cached = loadAgentSpecs();
     if (cached && cached.method === 'agent') {
       setSpecs(cached);
       return;
     }
 
-    // 2. Fall back to browser detection immediately so UI isn't blank
+    // 3. Fall back to browser detection immediately so UI isn't blank
     detect();
 
-    // 3. Listen on BroadcastChannel — bridge HTML posts specs here instantly
-    //    when it opens in any tab on the same origin. This is the fast path.
-    let bc;
-    try {
-      bc = new BroadcastChannel('cyri_agent_channel');
-      bc.onmessage = (event) => {
-        if (event.data?.type === 'SPECS_READY' && event.data?.specs) {
-          saveAgentSpecs(event.data.specs);
-          setSpecs(event.data.specs);
-        }
-      };
-    } catch {}
-
-    // 4. Poll localStorage + API as fallback (bridge may not broadcast in all browsers)
+    // 4. Poll localStorage every 2s as a last-resort fallback
     let retries = 0;
     const MAX_RETRIES = 30;
-
-    const interval = setInterval(async () => {
+    const interval = setInterval(() => {
       retries++;
-      if (retries > MAX_RETRIES) {
-        clearInterval(interval);
-        return;
-      }
-
-      // 4a. Re-check localStorage (bridge HTML writes here)
+      if (retries > MAX_RETRIES) { clearInterval(interval); return; }
       const fresh = loadAgentSpecs();
       if (fresh && fresh.method === 'agent') {
         setSpecs(fresh);
         clearInterval(interval);
-        return;
       }
-
-      // 4b. Poll the server endpoint (direct POST path from agent)
-      try {
-        const res = await fetch('/api/agent/sync');
-        if (res.status === 200) {
-          const data = await res.json();
-          if (data?.specs?.method === 'agent') {
-            saveAgentSpecs(data.specs);
-            setSpecs(data.specs);
-            clearInterval(interval);
-          }
-        }
-      } catch {}
     }, 2000);
 
-    return () => {
-      clearInterval(interval);
-      try { bc?.close(); } catch {}
-    };
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
